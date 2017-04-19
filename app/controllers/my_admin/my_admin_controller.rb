@@ -8,12 +8,19 @@ class MyAdmin::MyAdminController < ActionController::Base
   before_filter :verify_login
   before_filter :get_all_applications
   before_filter :mailer_set_url_options
+  before_filter :st_security
 
   force_ssl if: :is_production?
 
   include MyAdminHelper
 
   protected
+  def st_security
+    if request.ssl?
+      response.headers['Strict-Transport-Security'] = "max-age=31536000; includeSubDomains; preload"
+    end
+  end
+
     def is_production?
       Rails.env.production?
     end
